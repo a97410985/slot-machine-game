@@ -33,7 +33,7 @@
     let screenDOM = document.getElementById('screen');
     screenDOM.style.width = squareSize * slotNum + 'px';
     screenDOM.style.height = squareSize + 'px';
-    let squareTypeColor = ['red', 'yellow', 'gray', 'purple', 'brown', 'coral'];
+    let squareType = ['burger', 'cake', 'doughnut', 'egg', 'fruit', 'pizza', 'watermelon'];
 
     let squareGroupsDOM = [];
     for (let i = 0; i < slotNum; i++) {
@@ -48,10 +48,14 @@
             let squareDOM = document.createElement('div');
             squareDOM.style.width = squareSize + 'px';
             squareDOM.style.height = squareSize + 'px';
+            let imgDOM = document.createElement('img');
+            imgDOM.style.width = squareSize + 'px';
+            imgDOM.style.height = squareSize + 'px';
+            squareDOM.appendChild(imgDOM);
             if (j === colSquareNum) {
-                squareDOM.style.backgroundColor = squareTypeColor[0];
+                imgDOM.src = `images/${squareType[0]}.png`;
             } else {
-                squareDOM.style.backgroundColor = squareTypeColor[j];
+                imgDOM.src = `images/${squareType[j]}.png`;
             }
             squareGroupDOM.appendChild(squareDOM);
         }
@@ -77,7 +81,7 @@
             squareSpeedList.push((slotNum - i / 2) * 4);
             squareMoveLengList.push(0);
             let randColorIndex = Math.floor(Math.random() * colSquareNum);
-            resultDOM.innerHTML += squareTypeColor[randColorIndex] + "&nbsp";
+            resultDOM.innerHTML += squareType[randColorIndex] + "&nbsp";
             colorIndexList.push(randColorIndex);
             moveLengLimit.push(colSquareNum * squareSize * 3 + (colSquareNum - randColorIndex - 1) * squareSize);
             // moveLengLimit.push(100);
