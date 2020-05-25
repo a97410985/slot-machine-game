@@ -20,6 +20,9 @@
     <!--        <div class="square type1"></div>-->
     <!--    </div>-->
 </div>
+<div id="score">
+    score: 0
+</div>
 <div id="result">
 
 </div>
@@ -29,7 +32,7 @@
 <script>
     let squareSize = 100;
     let slotNum = 3;
-    let colSquareNum = 5;
+    let colSquareNum = 3;
     let screenDOM = document.getElementById('screen');
     screenDOM.style.width = squareSize * slotNum + 'px';
     screenDOM.style.height = squareSize + 'px';
@@ -74,7 +77,7 @@
         squareSpeedList = [];
         intervalIDList = [];
         moveLengLimit = [];
-        colorIndexList = [];
+        typeIndexList = [];
         resultDOM.innerHTML = "";
         for (let i = 0; i < slotNum; i++) {
             squareTopList.push(-(colSquareNum - 1) * squareSize);
@@ -82,7 +85,7 @@
             squareMoveLengList.push(0);
             let randColorIndex = Math.floor(Math.random() * colSquareNum);
             resultDOM.innerHTML += squareType[randColorIndex] + "&nbsp";
-            colorIndexList.push(randColorIndex);
+            typeIndexList.push(randColorIndex);
             moveLengLimit.push(colSquareNum * squareSize * 3 + (colSquareNum - randColorIndex - 1) * squareSize);
             // moveLengLimit.push(100);
         }
@@ -93,8 +96,9 @@
     let squareSpeedList = [];
     let intervalIDList = [];
     let moveLengLimit = [];
-    let colorIndexList = [];
+    let typeIndexList = [];
     let completeCounter = slotNum;
+    let score = 0;
     resetAnimation();
 
     function startGame() {
@@ -124,6 +128,22 @@
                         console.log('intervalIDList : ', intervalIDList);
                         clearInterval(intervalIDList[i]);
                         completeCounter++;
+                        if (completeCounter === slotNum) {
+                            // 計算得分
+                            let allSame = true;
+                            for (let i = 0 ; i < slotNum-1; i++) {
+                                if (typeIndexList[i] !== typeIndexList[i+1]) {
+                                    allSame = false;
+                                    break;
+                                }
+                            }
+                            if(allSame) {
+                                alert("中大獎");
+                                score += 1000;
+                                document.getElementById('score').innerHTML = "score : " + score;
+                            }
+                            
+                        }
                         return
                     }
                     squareGroupsDOM[i].style.top = squareTopList[i] + 'px';
