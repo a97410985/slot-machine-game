@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #screen {
+            border: 1px solid green;
+            position: relative;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+<div id="screen">
+    <!--    <div id="square-group">-->
+    <!--        <div class="square type1"></div>-->
+    <!--        <div class="square type2"></div>-->
+    <!--        <div class="square type3"></div>-->
+    <!--        <div class="square type1"></div>-->
+    <!--    </div>-->
+</div>
+<div id="result">
+
+</div>
+<button onclick="startGame();" id="start">
+    start
+</button>
+<script>
+    let squareSize = 100;
+    let slotNum = 3;
+    let colSquareNum = 5;
+    let screenDOM = document.getElementById('screen');
+    screenDOM.style.width = squareSize * slotNum + 'px';
+    screenDOM.style.height = squareSize + 'px';
+    let squareTypeColor = ['red', 'yellow', 'gray', 'purple', 'brown', 'coral'];
+
+    let squareGroupsDOM = [];
+    for (let i = 0; i < slotNum; i++) {
+        let squareGroupDOM = document.createElement("div");
+        squareGroupDOM.style.top = (colSquareNum - 1) * squareSize + 'px';
+        squareGroupDOM.style.left = squareSize * i + 'px';
+        squareGroupDOM.style.position = 'absolute';
+        squareGroupDOM.style.height = squareSize * 3 + 'px';
+        squareGroupDOM.style.width = squareSize + 'px';
+        // 要多補一個square讓動畫重跑的時候不會有空隙
+        for (let j = 0; j < colSquareNum + 1; j++) {
+            let squareDOM = document.createElement('div');
+            squareDOM.style.width = squareSize + 'px';
+            squareDOM.style.height = squareSize + 'px';
+            if (j === colSquareNum) {
+                squareDOM.style.backgroundColor = squareTypeColor[0];
+            } else {
+                squareDOM.style.backgroundColor = squareTypeColor[j];
+            }
+            squareGroupDOM.appendChild(squareDOM);
+        }
+
+
+        screenDOM.appendChild(squareGroupDOM);
+
+        squareGroupsDOM.push(squareGroupDOM);
+    }
+
+    let resultDOM = document.getElementById('result');
+
+    function resetAnimation() {
+        squareMoveLengList = [];
+        squareTopList = [];
+        squareSpeedList = [];
+        intervalIDList = [];
+        moveLengLimit = [];
+        colorIndexList = [];
+        resultDOM.innerHTML = "";
+        for (let i = 0; i < slotNum; i++) {
+            squareTopList.push(-(colSquareNum - 1) * squareSize);
+            squareSpeedList.push((slotNum - i / 2) * 4);
+            squareMoveLengList.push(0);
+            let randColorIndex = Math.floor(Math.random() * colSquareNum);
+            resultDOM.innerHTML += squareTypeColor[randColorIndex] + "&nbsp";
+            colorIndexList.push(randColorIndex);
+            moveLengLimit.push(colSquareNum * squareSize * 3 + (colSquareNum - randColorIndex - 1) * squareSize);
+            // moveLengLimit.push(100);
+        }
+    }
+
+    let squareMoveLengList = [];
+    let squareTopList = [];
+    let squareSpeedList = [];
+    let intervalIDList = [];
+    let moveLengLimit = [];
+    let colorIndexList = [];
+    let completeCounter = slotNum;
+    resetAnimation();
+
+    function startGame() {
+        if (completeCounter === slotNum) {
+            alert("start game");
+            completeCounter = 0;
+            resetAnimation();
+
+            for (let i = 0; i < slotNum; i++) {
+                intervalIDList.push(setInterval(() => {
+                    if (squareTopList[i] < 0) {
+                        squareTopList[i] += squareSpeedList[i];
+                        squareMoveLengList[i] += squareSpeedList[i];
+
+                    } else {
+                        squareTopList[i] = -colSquareNum * squareSize;
+                    }
+                    if (squareMoveLengList[i] > moveLengLimit[i]) {
+                        // 可能會沒有貼齊，要變成最接近且為squareSize的倍數的數字
+                        let base = Math.round(squareTopList[i] / squareSize);
+                        let temp = squareMoveLengList[i] % squareSize;
+                        if (temp > squareSize / 2) {
+                            squareGroupsDOM[i].style.top = (base + 1) * squareSize + 'px';
+                        } else {
+                            squareGroupsDOM[i].style.top = base * squareSize + 'px';
+                        }
+                        console.log('intervalIDList : ', intervalIDList);
+                        clearInterval(intervalIDList[i]);
+                        completeCounter++;
+                        return
+                    }
+                    squareGroupsDOM[i].style.top = squareTopList[i] + 'px';
+                }, 20));
+            }
+        }
+
+    }
+</script>
+</body>
+</html>
